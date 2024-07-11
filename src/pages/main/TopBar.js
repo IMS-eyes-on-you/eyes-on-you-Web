@@ -14,7 +14,7 @@ const TopBar = () => {
                 dataRef.current.push(parsedData);
             });
         } else {
-            setDataArray(['웹에서는 동작 안해요']);
+            setData(['웹에서는 동작 안해요']);
         }
     }, []);
 

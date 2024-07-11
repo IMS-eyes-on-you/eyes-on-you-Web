@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
-import './css/FileUploader.css'; // 스타일 파일을 임포트합니다.
+import './css/FileUploader.css';
 
-const FileUploader = ({ files = [] }) => {
+const FileUploader = ({ files = []}) => {
+    const ws = useRef(null);
+
     return (
+
         <div className="file-uploader">
             <DocViewer
                 documents={files.map((file) => ({
-                    uri: window.URL.createObjectURL(file),
+                    uri: file.uri,
                     fileName: file.name,
                 }))}
                 pluginRenderers={DocViewerRenderers}

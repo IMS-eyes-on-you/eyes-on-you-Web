@@ -7,7 +7,6 @@ import SideList from "./SideList";
 
 const ClassRoom = () => {
     const [files, setFiles] = useState([]);
-
     return (
         <div className="class-room">
             <TopBar/>
@@ -15,7 +14,7 @@ const ClassRoom = () => {
             <div className="main-contents">
                 <div className="content-form">
                     <div className="source-form">
-                        <FileUploader files={files} />
+                        <FileUploader files={files}/>
                     </div>
                     <div className="side-list">
                         <SideList setFiles={setFiles} files={files} />

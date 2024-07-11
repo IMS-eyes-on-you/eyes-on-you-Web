@@ -8,7 +8,7 @@ const SideBar = ()=>{
             <Link to="/">
                 <BsHouse size={48}/>
             </Link>
-            <Link to="/">
+            <Link to="/dashboard">
                 <BsBarChart size={48}/>
             </Link>
             <Link to="/classroom">
