@@ -1,10 +1,90 @@
 import React, {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import kurentoUtils from 'kurento-utils';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 const SfuStream = () => {
 
+        const isShareView = useRef(false)
+        const shareView = useRef(null)
+
+        class ScreenHandler {
+            getCrossBrowserScreenCapture() {
+                if (navigator.mediaDevices.getDisplayMedia) {
+                    return navigator.mediaDevices.getDisplayMedia({video: true})
+                } else {
+                    throw new Error("Screen sharing not supported in this browser")
+                }
+            }
+
+
+            async start() {
+                try {
+                    shareView.current = await this.getCrossBrowserScreenCapture()
+                } catch (err) {
+                    console.log('error getDisplay', err)
+                }
+                return shareView.current
+            }
+
+            end() {
+                if (shareView.current) {
+                    shareView.current.getTracks().forEach(track => track.stop())
+                    shareView.current = null
+                }
+            }
+            
+        }
+
+        const startScreenShare = async () => {
+            await screenHandler.start()
+            var participant = participants[userId.current]
+            var video = participant.getVideoElement()
+            participant.setLocalStream(video.srcObject)
+            if(shareView.current == null){
+                return;
+            }
+            video.srcObject = shareView.current
+
+            await participant.rtcPeer.peerConnection.getSenders().forEach(sender => {
+                if (sender.track.kind === 'video') {
+                    sender.replaceTrack(shareView.current.getVideoTracks()[0])
+                }
+            })
+
+            shareView.current.getVideoTracks()[0].addEventListener("ended", () => {
+                stopScreenShare()
+            })
+
+        }
+
+        const stopScreenShare = async () => {
+            await screenHandler.end()
+            let participant = participants[userId.current]
+            let video = participant.getVideoElement()
+            video.srcObject = participant.getLocalStream();
+
+            await participant.rtcPeer.peerConnection.getSenders().forEach(sender => {
+                if (sender.track.kind === 'video') {
+                    sender.replaceTrack(participant.getLocalStream().getVideoTracks()[0])
+                }
+            })
+
+
+        }
+
+        const screenShare = async () => {
+            if(isShareView.current){
+                await stopScreenShare();
+                isShareView.current = true
+            }
+            else{
+                await startScreenShare()
+                isShareView.current = false
+            }
+        }
+
+        //참가자 클래스
         class Participant {
 
             constructor(name) {
@@ -28,6 +108,8 @@ const SfuStream = () => {
 
                 this.video.autoplay = true;
                 this.video.controls = false;
+                this.video.width = 500;
+                this.video.height = 300;
                 this.audio.autoplay = true;
                 this.audio.volume = 1;
             }
@@ -68,6 +150,7 @@ const SfuStream = () => {
                 if (this.container.parentNode) {
                     this.container.parentNode.removeChild(this.container);
                 }
+                
             };
 
             offerToReceiveAudio(error, offerSdp, wp) {
@@ -85,6 +168,7 @@ const SfuStream = () => {
 
 
         }
+        const screenHandler = new ScreenHandler();
         const navigate = useNavigate();
         const userId = useRef('bang')
         const name = useRef('bang')
@@ -95,20 +179,20 @@ const SfuStream = () => {
         const [processedParticipants, setProcessedParticipants] = useState(new Set());
         let participants = {};
         var utils = require('kurento-utils');
-        let screenHandler = null;
         let origGetUserMedia = null;
+        //나중에 kurento server 올릴 떄 주소 찾아야됨
         let turnUrl = "turn:198.51.100.1:3478";
         let turnUser = "user";
         let turnPwd = "password";
         let locationHost = "localhost:8080";
-        const [shareView, setShareView] = useState(null);
         const ws = useRef(null);
         const useAudio = useRef(true)
         var constraints = {
             audio: true,
             video: {
 
-                maxWidth: 320,
+                width: 500,
+                height: 300,
                 maxFrameRate: 15,
                 minFrameRate: 15,
 
@@ -193,7 +277,7 @@ const SfuStream = () => {
         const onParticipantLeft = (message) => {
             var participant = participants[message.name]
             participant.dispose()
-            delete  participant[message.name]
+            delete participants[message.name];
         }
 
         const leftUser = () => {
@@ -201,10 +285,13 @@ const SfuStream = () => {
                 id: 'leaveRoom'
             })
 
-            for (let key in participants){
-                if(participants.hasOwnProperty(key)){
+            for (let key in participants) {
+                if (participants.hasOwnProperty(key)) {
                     participants[key].dispose();
                 }
+            }
+            if (ws.current) {
+                ws.current.close();
             }
         }
 
@@ -221,7 +308,7 @@ const SfuStream = () => {
 
         useEffect(() => {
             console.log("호출")
-            if(isEnter){
+            if (isEnter) {
                 ws.current = new WebSocket('ws://localhost:8080/signal');
                 ws.current.onopen = () => {
                     register();
@@ -246,9 +333,14 @@ const SfuStream = () => {
                             console.log("receiveVideoAnswer", parsedMessage)
                             receiveVideoResponse(parsedMessage);
                             break;
-                        case 'participantExit':
-                            console.log("participantExit", parsedMessage)
+                        case 'participantLeft':
+                            console.log("participantLeft", parsedMessage)
                             onParticipantLeft(parsedMessage)
+                            break;
+                        case 'hostExit':
+                            console.log("hostExit", parsedMessage)
+                            exit()
+                            break;
                         default:
                             console.error(parsedMessage);
                             break;
@@ -260,7 +352,8 @@ const SfuStream = () => {
                         constraints.audio = true
                         // Add your logic after successfully getting the media here.
                         constraints.video = {
-                            maxWidth: 320,
+                            width: 500,
+                            height: 300,
                             maxFrameRate: 15,
                             minFrameRate: 15,
                         };
@@ -294,11 +387,13 @@ const SfuStream = () => {
             var jsonMessage = JSON.stringify(message);
             ws.current.send(jsonMessage);
         };
+
         async function postUser() {
             try {
                 // POST 요청은 body에 실어 보냄
                 await axios.post('http://localhost:8080/chat/createroom', {
                     name: 'bang',
+                    roomName: 'bang',
                     maxUserCnt: '8',
                     chatType: 'video',
                 });
@@ -325,23 +420,26 @@ const SfuStream = () => {
             roomName.current = "bang"
         }
 
+    const changeRoom = () => {
+        roomId.current = "nam"
+    }
+
         const exit = () => {
             leftUser()
             setIsEnter(false)
-            window.location.reload()
         }
-
-
 
 
         return (
             <div>
                 <div>
                     <button onClick={postUser}>방 생성</button>
+                    <button onClick={changeRoom}>방 이름 변경</button>
                     <button onClick={change}>이름 변경</button>
                     <button onClick={change2}>이름 변경 2</button>
                     <button onClick={enterRoom}>입장</button>
                     <button onClick={exit}>퇴장</button>
+                    <button onClick={() => screenShare()}> 화면 공유</button>
                 </div>
                 {isEnter && <div id='participants'>
                     {Object.values(participants).map((participant) => (
@@ -350,7 +448,6 @@ const SfuStream = () => {
                             <span>
                             {participant.name}
                         </span>
-                            <button onClick={() => audioSetting(name.current)}> 볼륨on/off</button>
                         </div>
                     ))}
                 </div>}
