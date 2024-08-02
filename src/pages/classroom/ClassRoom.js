@@ -4,6 +4,7 @@ import TopBar from "../main/TopBar";
 import './css/ClassRoom.css';
 import FileUploader from "./FileUploader";
 import SideList from "./SideList";
+import SfuStream from "./SfuStream"
 
 const ClassRoom = () => {
     const [files, setFiles] = useState([]);
@@ -14,7 +15,7 @@ const ClassRoom = () => {
             <div className="main-contents">
                 <div className="content-form">
                     <div className="source-form">
-                        <FileUploader files={files}/>
+                        <SfuStream files={files}/>
                     </div>
                     <div className="side-list">
                         <SideList setFiles={setFiles} files={files} />
