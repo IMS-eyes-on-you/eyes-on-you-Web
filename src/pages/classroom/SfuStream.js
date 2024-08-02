@@ -2,8 +2,9 @@ import React, {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import kurentoUtils from 'kurento-utils';
 import {useNavigate} from 'react-router-dom';
+import FileUploader from './FileUploader'
 
-const SfuStream = () => {
+const SfuStream = ({files}) => {
 
         const isShareView = useRef(false)
         const shareView = useRef(null)
@@ -33,7 +34,7 @@ const SfuStream = () => {
                     shareView.current = null
                 }
             }
-            
+
         }
 
         const startScreenShare = async () => {
@@ -41,7 +42,7 @@ const SfuStream = () => {
             var participant = participants[userId.current]
             var video = participant.getVideoElement()
             participant.setLocalStream(video.srcObject)
-            if(shareView.current == null){
+            if (shareView.current == null) {
                 return;
             }
             video.srcObject = shareView.current
@@ -74,11 +75,10 @@ const SfuStream = () => {
         }
 
         const screenShare = async () => {
-            if(isShareView.current){
+            if (isShareView.current) {
                 await stopScreenShare();
                 isShareView.current = true
-            }
-            else{
+            } else {
                 await startScreenShare()
                 isShareView.current = false
             }
@@ -87,7 +87,8 @@ const SfuStream = () => {
         //참가자 클래스
         class Participant {
 
-            constructor(name) {
+            constructor(name, host) {
+                this.host = host
                 this.name = name;
                 this.rtcPeer = null;
                 this.localStream = null;
@@ -100,14 +101,15 @@ const SfuStream = () => {
                 this.container.appendChild(this.span);
                 this.container.appendChild(this.video);
                 this.container.appendChild(this.audio);
-                document.getElementById('participants').appendChild(this.container);
-
+                if (this.host == this.name) {
+                    document.getElementById('participants').appendChild(this.container);
+                }
                 this.span.appendChild(document.createTextNode(name))
 
                 this.video.id = 'video-' + name;
 
                 this.video.autoplay = true;
-                this.video.controls = false;
+                this.video.playsInline = true;
                 this.video.width = 500;
                 this.video.height = 300;
                 this.audio.autoplay = true;
@@ -150,7 +152,7 @@ const SfuStream = () => {
                 if (this.container.parentNode) {
                     this.container.parentNode.removeChild(this.container);
                 }
-                
+
             };
 
             offerToReceiveAudio(error, offerSdp, wp) {
@@ -168,15 +170,16 @@ const SfuStream = () => {
 
 
         }
+
         const screenHandler = new ScreenHandler();
         const navigate = useNavigate();
+        const host = useRef(null);
         const userId = useRef('bang')
         const name = useRef('bang')
         const roomId = useRef('bang')
         const roomName = useRef('bang')
         const [isEnter, setIsEnter] = useState(false)
-
-        const [processedParticipants, setProcessedParticipants] = useState(new Set());
+        const [rooms, setRooms] = useState([]);
         let participants = {};
         var utils = require('kurento-utils');
         let origGetUserMedia = null;
@@ -224,8 +227,9 @@ const SfuStream = () => {
         };
 
         const receiveAudio = (sender) => {
-            console.log('sender name: ', sender)
-            var participant = new Participant(sender.name);
+            console.log('sender name: ', sender.name)
+            console.log(sender.hostName)
+            var participant = new Participant(sender.name, sender.hostName);
             participants[sender.name] = participant;
             var video = participant.getVideoElement();
             console.log(participant.getVideoElement())
@@ -251,7 +255,7 @@ const SfuStream = () => {
 
         const onExistingParticipants = (msg) => {
             console.log(name.current + ' registered in room ' + roomName.current);
-            var participant = new Participant(name.current);
+            var participant = new Participant(name.current, msg.data.hostName);
             participants[name.current] = participant;
 
             var video = participant.getVideoElement();
@@ -293,6 +297,8 @@ const SfuStream = () => {
             if (ws.current) {
                 ws.current.close();
             }
+
+            updateRooms()
         }
 
         const audioSetting = (name) => {
@@ -305,6 +311,10 @@ const SfuStream = () => {
                 audioTrack.enabled = true
             }
         }
+        
+        useEffect(() => {
+            updateRooms()
+        }, [])
 
         useEffect(() => {
             console.log("호출")
@@ -358,6 +368,9 @@ const SfuStream = () => {
                             minFrameRate: 15,
                         };
                     });
+                if (host.current) {
+                    screenShare()
+                }
                 return () => {
                     if (ws.current) {
                         ws.current.close();
@@ -366,6 +379,13 @@ const SfuStream = () => {
             }
 
         }, [isEnter]);
+
+        const hostCheck = (participant) => {
+            console.log(participant.host)
+            if (participant.host) {
+                return participant.getVideoElement()
+            }
+        }
 
         function receiveVideoResponse(result) {
             participants[result.name].rtcPeer.processAnswer(result.sdpAnswer, function (error) {
@@ -392,17 +412,33 @@ const SfuStream = () => {
             try {
                 // POST 요청은 body에 실어 보냄
                 await axios.post('http://localhost:8080/chat/createroom', {
-                    name: 'bang',
-                    roomName: 'bang',
+                    name: name.current,
+                    roomName: roomId.current,
                     maxUserCnt: '8',
                     chatType: 'video',
                 });
             } catch (e) {
                 console.error(e);
             }
+            host.current = true;
+            enterRoom(roomId.current, name.current)
         }
 
-        const enterRoom = () => {
+        const updateRooms = async () =>{
+            try {
+                const data = await axios.get('http://localhost:8080/chat/allrooms')
+                setRooms(data.data)
+                console.log(rooms)
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        const enterRoom = (roomIds, names) => {
+            userId.current = names
+            name.current = names
+            roomId.current = roomIds
+            roomName.current = roomIds
             setIsEnter(true)
         }
 
@@ -419,10 +455,22 @@ const SfuStream = () => {
             roomId.current = "bang"
             roomName.current = "bang"
         }
+        const fullScreen = () => {
+            Object.values(participants).map((participant) => {
+                console.log(participant.host)
+                if (participant.host) {
+                    participant.getVideoElement().requestFullscreen()
+                    return;
+                }
+            })
+        }
 
-    const changeRoom = () => {
-        roomId.current = "nam"
-    }
+        const changeRoom = () => {
+            roomId.current = "nam"
+            userId.current = 'aaaaa'
+            name.current = 'aaaaa'
+            
+        }
 
         const exit = () => {
             leftUser()
@@ -433,13 +481,19 @@ const SfuStream = () => {
         return (
             <div>
                 <div>
-                    <button onClick={postUser}>방 생성</button>
-                    <button onClick={changeRoom}>방 이름 변경</button>
-                    <button onClick={change}>이름 변경</button>
-                    <button onClick={change2}>이름 변경 2</button>
-                    <button onClick={enterRoom}>입장</button>
-                    <button onClick={exit}>퇴장</button>
-                    <button onClick={() => screenShare()}> 화면 공유</button>
+                    {!isEnter && <button onClick={postUser}>방 생성</button>}
+                    {!isEnter && <button onClick={changeRoom}>방 이름 변경</button>}
+                    {!isEnter && <button onClick={change}>이름 변경</button>}
+                    {!isEnter && <button onClick={change2}>이름 변경 2</button>}
+                    {!isEnter && <button onClick={() => enterRoom(roomName.current, name.current)}>입장</button>}
+                    {!isEnter && <button onClick={updateRooms}>새로고침</button>}
+                    {isEnter && <button onClick={exit}>퇴장</button>}
+                    {isEnter && <button onClick={() => screenShare()}> 화면 공유</button>}
+                    {isEnter && <button onClick={() => fullScreen()}>풀스크린</button>}
+                    {rooms.map((room) => (
+                        <button onClick={() => enterRoom(room, 'hyun')}>{room}</button>
+                    ))}
+                    <FileUploader files={files}/>
                 </div>
                 {isEnter && <div id='participants'>
                     {Object.values(participants).map((participant) => (
@@ -447,12 +501,11 @@ const SfuStream = () => {
                             {participant.getVideoElement()} {/* 비디오 요소 사용 */}
                             <span>
                             {participant.name}
-                        </span>
+                            </span>
                         </div>
                     ))}
                 </div>}
             </div>
-
         );
     }
 ;
