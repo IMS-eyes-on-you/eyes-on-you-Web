@@ -12,7 +12,7 @@
     "axios": "^1.7.2",
     "electron-store": "^3.2.0",
     "kurento-utils": "^7.0.0",
-    "pdfjs-dist": "^2.12.313",
+    "pdfjs-dist": "^2.16.105",
     "react": "^18.3.1",
     "react-doc-viewer": "^0.1.13",
     "react-dom": "^18.3.1",
