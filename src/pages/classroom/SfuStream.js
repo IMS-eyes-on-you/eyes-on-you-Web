@@ -184,10 +184,10 @@ const SfuStream = ({files}) => {
         var utils = require('kurento-utils');
         let origGetUserMedia = null;
         //나중에 kurento server 올릴 떄 주소 찾아야됨
-        let turnUrl = "turn:198.51.100.1:3478";
+        let turnUrl = "turn:192.168.0.35:3478";
         let turnUser = "user";
         let turnPwd = "password";
-        let locationHost = "localhost:8080";
+        let locationHost = "192.168.0.35:8080";
         const ws = useRef(null);
         const useAudio = useRef(true)
         var constraints = {
@@ -208,23 +208,6 @@ const SfuStream = ({files}) => {
             receiveAudio(newParticipant);
         };
 
-        const initTurnServer = () => {
-            fetch("https://" + locationHost + "/turnconfig", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    turnUrl = data.url;
-                    turnUser = data.username;
-                    turnPwd = data.credential;
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        };
 
         const receiveAudio = (sender) => {
             console.log('sender name: ', sender.name)
@@ -240,6 +223,15 @@ const SfuStream = ({files}) => {
                 remoteVideo: video,
                 remoteAudio: audio,
                 onicecandidate: participant.onIceCandidate.bind(participant)
+                configuration: {
+                    iceServers: [
+                        {
+                            urls: turnUrl,
+                            username: turnUser,
+                            credential: turnPwd
+                        }
+                    ]
+                }
             };
 
             participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(options, function (error) {
@@ -319,7 +311,7 @@ const SfuStream = ({files}) => {
         useEffect(() => {
             console.log("호출")
             if (isEnter) {
-                ws.current = new WebSocket('ws://localhost:8080/signal');
+                ws.current = new WebSocket('ws://'+ locationHost +'/signal');
                 ws.current.onopen = () => {
                     register();
                 };
@@ -411,7 +403,7 @@ const SfuStream = ({files}) => {
         async function postUser() {
             try {
                 // POST 요청은 body에 실어 보냄
-                await axios.post('http://localhost:8080/chat/createroom', {
+                await axios.post('http://'+locationHost+'/chat/createroom', {
                     name: name.current,
                     roomName: roomId.current,
                     maxUserCnt: '8',
@@ -426,7 +418,7 @@ const SfuStream = ({files}) => {
 
         const updateRooms = async () =>{
             try {
-                const data = await axios.get('http://localhost:8080/chat/allrooms')
+                const data = await axios.get('http://'+locationHost+'/chat/allrooms')
                 setRooms(data.data)
                 console.log(rooms)
             } catch (e) {
