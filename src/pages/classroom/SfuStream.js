@@ -222,7 +222,7 @@ const SfuStream = ({files}) => {
             var options = {
                 remoteVideo: video,
                 remoteAudio: audio,
-                onicecandidate: participant.onIceCandidate.bind(participant)
+                onicecandidate: participant.onIceCandidate.bind(participant),
                 configuration: {
                     iceServers: [
                         {
