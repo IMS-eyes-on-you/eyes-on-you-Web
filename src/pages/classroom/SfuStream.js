@@ -258,6 +258,15 @@ const SfuStream = ({files}) => {
                 localAudeo: audio,
                 mediaConstraints: constraints,
                 onicecandidate: participant.onIceCandidate.bind(participant),
+                configuration: {
+                    iceServers: [
+                        {
+                            urls: turnUrl,
+                            username: turnUser,
+                            credential: turnPwd
+                        }
+                    ]
+                }
             };
 
             participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options, function (error) {
