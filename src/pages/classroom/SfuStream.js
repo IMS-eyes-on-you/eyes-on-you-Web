@@ -410,6 +410,7 @@ const SfuStream = ({files}) => {
         };
 
         async function postUser() {
+            console.log(name.current)
             try {
                 // POST 요청은 body에 실어 보냄
                 await axios.post('http://'+locationHost+'/chat/createroom', {
@@ -436,6 +437,7 @@ const SfuStream = ({files}) => {
         }
 
         const enterRoom = (roomIds, names) => {
+            console.log(roomIds, names)
             userId.current = names
             name.current = names
             roomId.current = roomIds
@@ -443,19 +445,7 @@ const SfuStream = ({files}) => {
             setIsEnter(true)
         }
 
-        const change = () => {
-            userId.current = 'Nam'
-            name.current = 'Nam'
-            roomId.current = "bang"
-            roomName.current = "bang"
-        }
 
-        const change2 = () => {
-            userId.current = 'hyun'
-            name.current = "hyun"
-            roomId.current = "bang"
-            roomName.current = "bang"
-        }
         const fullScreen = () => {
             Object.values(participants).map((participant) => {
                 console.log(participant.host)
@@ -464,6 +454,12 @@ const SfuStream = ({files}) => {
                     return;
                 }
             })
+        }
+
+        const changeName = (e) => {
+            name.current = e.target.value
+            userId.current = e.target.value
+
         }
 
         const changeRoom = () => {
@@ -484,15 +480,22 @@ const SfuStream = ({files}) => {
                 <div>
                     {!isEnter && <button onClick={postUser}>방 생성</button>}
                     {!isEnter && <button onClick={changeRoom}>방 이름 변경</button>}
-                    {!isEnter && <button onClick={change}>이름 변경</button>}
-                    {!isEnter && <button onClick={change2}>이름 변경 2</button>}
+                    {!isEnter && (
+                        <div>
+                            <input
+                                type="text"
+                                placeholder="새 이름 입력"
+                                onChange={changeName}
+                            />
+                        </div>
+                    )}
                     {!isEnter && <button onClick={() => enterRoom(roomName.current, name.current)}>입장</button>}
                     {!isEnter && <button onClick={updateRooms}>새로고침</button>}
                     {isEnter && <button onClick={exit}>퇴장</button>}
                     {isEnter && <button onClick={() => screenShare()}> 화면 공유</button>}
                     {isEnter && <button onClick={() => fullScreen()}>풀스크린</button>}
                     {rooms.map((room) => (
-                        <button onClick={() => enterRoom(room, 'hyun')}>{room}</button>
+                        <button onClick={() => enterRoom(roomName.current, name.current)}>{room}</button>
                     ))}
                     <FileUploader files={files}/>
                 </div>
