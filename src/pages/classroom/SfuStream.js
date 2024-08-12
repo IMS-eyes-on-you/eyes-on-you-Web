@@ -314,11 +314,15 @@ const SfuStream = ({files}) => {
         }
 
         useEffect(() => {
+            console.log("호출")
+            // eslint-disable-next-line no-restricted-globals
+            const params = new URLSearchParams(location.search)
+            localStorage.setItem('accessToken', params.get('accessToken'))
+            localStorage.setItem('userId', params.get('userId'))
             updateRooms()
         }, [])
 
         useEffect(() => {
-            console.log("호출")
             if (isEnter) {
                 ws.current = new WebSocket('ws://' + locationHost + '/signal');
                 ws.current.onopen = () => {
@@ -421,9 +425,9 @@ const SfuStream = ({files}) => {
                 }, {
 
                     headers: {
-                        Authorization: 'Bearer ' +localStorage.getItem("refreshToken")
+                        Authorization: localStorage.getItem("accessToken")
                     }
-                
+
                 });
             } catch (e) {
                 console.error(e);
@@ -436,11 +440,12 @@ const SfuStream = ({files}) => {
             try {
                 const data = await axios.get('http://' + locationHost + '/chat/allrooms', {
                     headers: {
-                        Authorization: 'Bearer ' + localStorage.getItem("refreshToken")
+                        Authorization: localStorage.getItem("accessToken")
                     }
                 })
                 setRooms(data.data)
                 console.log(rooms)
+                console.log(data)
             } catch (e) {
                 console.error(e);
             }
@@ -489,12 +494,11 @@ const SfuStream = ({files}) => {
                             />
                         </div>
                     )}
-                    {!isEnter && <button onClick={() => enterRoom(roomName.current, localStorage.getItem('userId'))}>입장</button>}
                     {!isEnter && <button onClick={updateRooms}>새로고침</button>}
                     {isEnter && <button onClick={exit}>퇴장</button>}
                     {isEnter && <button onClick={() => screenShare()}> 화면 공유</button>}
                     {isEnter && <button onClick={() => fullScreen()}>풀스크린</button>}
-                    {rooms.map((room) => (
+                    {rooms && rooms.map((room) => (
                         <button onClick={() => enterRoom(room, localStorage.getItem('userId'))}>{room}</button>
                     ))}
                     <FileUploader files={files}/>
