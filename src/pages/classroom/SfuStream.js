@@ -187,7 +187,7 @@ const SfuStream = ({files}) => {
         let turnUrl = "turn:192.168.0.35:3478";
         let turnUser = "user";
         let turnPwd = "password";
-        let locationHost = "192.168.0.35:8080";
+        let locationHost = "localhost:8080";
         const ws = useRef(null);
         const useAudio = useRef(true)
         var constraints = {
@@ -312,7 +312,7 @@ const SfuStream = ({files}) => {
                 audioTrack.enabled = true
             }
         }
-        
+
         useEffect(() => {
             updateRooms()
         }, [])
@@ -320,7 +320,7 @@ const SfuStream = ({files}) => {
         useEffect(() => {
             console.log("호출")
             if (isEnter) {
-                ws.current = new WebSocket('ws://'+ locationHost +'/signal');
+                ws.current = new WebSocket('ws://' + locationHost + '/signal');
                 ws.current.onopen = () => {
                     register();
                 };
@@ -413,11 +413,17 @@ const SfuStream = ({files}) => {
             console.log(name.current)
             try {
                 // POST 요청은 body에 실어 보냄
-                await axios.post('http://'+locationHost+'/chat/createroom', {
-                    name: name.current,
+                await axios.post('http://' + locationHost + '/chat/createroom', {
+                    name: localStorage.getItem('userId'),
                     roomName: roomId.current,
                     maxUserCnt: '8',
                     chatType: 'video',
+                }, {
+
+                    headers: {
+                        Authorization: 'Bearer ' +localStorage.getItem("refreshToken")
+                    }
+                
                 });
             } catch (e) {
                 console.error(e);
@@ -426,9 +432,13 @@ const SfuStream = ({files}) => {
             enterRoom(roomId.current, name.current)
         }
 
-        const updateRooms = async () =>{
+        const updateRooms = async () => {
             try {
-                const data = await axios.get('http://'+locationHost+'/chat/allrooms')
+                const data = await axios.get('http://' + locationHost + '/chat/allrooms', {
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem("refreshToken")
+                    }
+                })
                 setRooms(data.data)
                 console.log(rooms)
             } catch (e) {
@@ -456,17 +466,8 @@ const SfuStream = ({files}) => {
             })
         }
 
-        const changeName = (e) => {
-            name.current = e.target.value
-            userId.current = e.target.value
-
-        }
-
-        const changeRoom = () => {
-            roomId.current = "nam"
-            userId.current = 'aaaaa'
-            name.current = 'aaaaa'
-            
+        const changeRoom = (e) => {
+            roomId.current = e.target.value
         }
 
         const exit = () => {
@@ -479,23 +480,22 @@ const SfuStream = ({files}) => {
             <div>
                 <div>
                     {!isEnter && <button onClick={postUser}>방 생성</button>}
-                    {!isEnter && <button onClick={changeRoom}>방 이름 변경</button>}
                     {!isEnter && (
                         <div>
                             <input
                                 type="text"
-                                placeholder="새 이름 입력"
-                                onChange={changeName}
+                                placeholder="방 이름 입력"
+                                onChange={changeRoom}
                             />
                         </div>
                     )}
-                    {!isEnter && <button onClick={() => enterRoom(roomName.current, name.current)}>입장</button>}
+                    {!isEnter && <button onClick={() => enterRoom(roomName.current, localStorage.getItem('userId'))}>입장</button>}
                     {!isEnter && <button onClick={updateRooms}>새로고침</button>}
                     {isEnter && <button onClick={exit}>퇴장</button>}
                     {isEnter && <button onClick={() => screenShare()}> 화면 공유</button>}
                     {isEnter && <button onClick={() => fullScreen()}>풀스크린</button>}
                     {rooms.map((room) => (
-                        <button onClick={() => enterRoom(roomName.current, name.current)}>{room}</button>
+                        <button onClick={() => enterRoom(room, localStorage.getItem('userId'))}>{room}</button>
                     ))}
                     <FileUploader files={files}/>
                 </div>
