@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 import axios from 'axios';
 
 const Login = () => {
+    localStorage.setItem('sucess', true)
     const userId = useRef(null)
     const password = useRef(null)
     const [isExpanded, setIsExpanded] = useState(false);

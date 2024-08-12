@@ -317,8 +317,10 @@ const SfuStream = ({files}) => {
             console.log("호출")
             // eslint-disable-next-line no-restricted-globals
             const params = new URLSearchParams(location.search)
-            localStorage.setItem('accessToken', params.get('accessToken'))
-            localStorage.setItem('userId', params.get('userId'))
+            if(params.has('oauth')){
+                localStorage.setItem('accessToken', params.get('accessToken'))
+                localStorage.setItem('userId', params.get('userId'))
+            }
             updateRooms()
         }, [])
 
