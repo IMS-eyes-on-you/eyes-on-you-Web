@@ -23,8 +23,6 @@ const Login = () => {
         } catch (e) {
             console.error(e);
         }
-        
-
     }
     const moveMain=()=>{
         navigate('/classroom')
@@ -36,11 +34,13 @@ const Login = () => {
     const changePassword = (e) => {
         password.current = e.target.value
     }
-    
+
     const handleLoginClick = () => {
         setIsExpanded(true);
     };
-
+    const handleSignUpClick = () =>{
+        navigate('/signup')
+    }
 
 
     return (
@@ -68,7 +68,7 @@ const Login = () => {
                             >
                                 로그인
                             </button>
-                            <button className="login-form-box-register-btn">회원가입</button>
+                            <button className="login-form-box-register-btn" onClick={handleSignUpClick}>회원가입</button>
                         </>
                     )}
                     <div className="login-inputs">

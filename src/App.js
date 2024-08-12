@@ -4,6 +4,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Login from "./pages/auth/Login";
 import Dashboard from "./pages/dashboard/Dashboard";
 import SfuStream from "./pages/classroom/SfuStream";
+import SignUp from "./pages/auth/SignUp";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
                 <Route path="classroom" element={<ClassRoom/>}/>
                 <Route path="dashboard" element={<Dashboard/>}/>
                 <Route path="/stream" element={<SfuStream/>}/>
+                <Route path="/signup" element={<SignUp/>}/>
               </Routes>
             </section>
           </main>
