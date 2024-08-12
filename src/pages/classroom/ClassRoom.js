@@ -1,13 +1,39 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import SideBar from "../main/SideBar";
 import TopBar from "../main/TopBar";
 import './css/ClassRoom.css';
-import FileUploader from "./FileUploader";
 import SideList from "./SideList";
 import SfuStream from "./SfuStream"
 
 const ClassRoom = () => {
     const [files, setFiles] = useState([]);
+    const [alertMessage, setAlertMessage] = useState('');
+
+    useEffect(() => {
+        // SSE 연결 설정
+        const eventSource = new EventSource('http://localhost:8080/alert');
+
+        eventSource.onopen = () => {
+            console.log("SSE-Connect")
+        }
+        eventSource.onmessage = (event) =>{
+            console.log(event.data)
+            setAlertMessage(event.data)
+        }
+        eventSource.onerror = (event) => {
+            eventSource.close();
+            if (event.target.readyState === EventSource.CLOSED) {
+                console.log("연결종료");
+            } else {
+                console.log("에러발생");
+            }
+        };
+
+        return () => {
+            eventSource.close();
+        };
+    }, []);
+
     return (
         <div className="class-room">
             <TopBar/>
