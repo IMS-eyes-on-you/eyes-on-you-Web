@@ -416,7 +416,6 @@ const SfuStream = ({files}) => {
         };
 
         async function postUser() {
-            console.log(name.current)
             try {
                 // POST 요청은 body에 실어 보냄
                 await axios.post('http://' + locationHost + '/chat/createroom', {
@@ -435,7 +434,7 @@ const SfuStream = ({files}) => {
                 console.error(e);
             }
             host.current = true;
-            enterRoom(roomId.current, name.current)
+            enterRoom(roomId.current, localStorage.getItem('userId'))
         }
 
         const updateRooms = async () => {
