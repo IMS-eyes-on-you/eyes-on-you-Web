@@ -173,7 +173,7 @@ const SfuStream = ({files}) => {
 
         const screenHandler = new ScreenHandler();
         const navigate = useNavigate();
-        const host = useRef(null);
+        const host = useRef(false);
         const userId = useRef('bang')
         const name = useRef('bang')
         const roomId = useRef('bang')
