@@ -287,7 +287,8 @@ const SfuStream = ({files}) => {
 
         const leftUser = () => {
             sendMessageToServer({
-                id: 'leaveRoom'
+                id: 'leaveRoom',
+                hostOut: host.current
             })
 
             for (let key in participants) {
