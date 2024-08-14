@@ -109,11 +109,10 @@ const SfuStream = ({files}) => {
                 this.video.id = 'video-' + name;
 
                 this.video.autoplay = true;
-                this.video.playsInline = true;
+                this.video.controls = true;
                 this.video.width = 500;
                 this.video.height = 300;
                 this.audio.autoplay = true;
-                this.audio.volume = 1;
             }
 
             setLocalStream(stream) {
@@ -196,8 +195,8 @@ const SfuStream = ({files}) => {
 
                 width: 500,
                 height: 300,
-                maxFrameRate: 15,
-                minFrameRate: 15,
+                maxFrameRate: 50,
+                minFrameRate: 40,
 
             },
         }
@@ -372,8 +371,8 @@ const SfuStream = ({files}) => {
                         constraints.video = {
                             width: 500,
                             height: 300,
-                            maxFrameRate: 15,
-                            minFrameRate: 15,
+                            maxFrameRate: 50,
+                            minFrameRate: 40,
                         };
                     });
                 if (host.current) {
