@@ -183,7 +183,7 @@ const SfuStream = ({files}) => {
         var utils = require('kurento-utils');
         let origGetUserMedia = null;
         //나중에 kurento server 올릴 떄 주소 찾아야됨
-        let turnUrl = "stun:192.168.0.15:3478";
+        let turnUrl = "stun:stun.l.google.com:19302";
         let turnUser = "user";
         let turnPwd = "password";
         let locationHost = "192.168.0.15:8080";
@@ -225,9 +225,7 @@ const SfuStream = ({files}) => {
                 configuration: {
                     iceServers: [
                         {
-                            urls: turnUrl,
-                            username: turnUser,
-                            credential: turnPwd
+                            urls: turnUrl
                         }
                     ]
                 }
@@ -260,9 +258,7 @@ const SfuStream = ({files}) => {
                 configuration: {
                     iceServers: [
                         {
-                            urls: turnUrl,
-                            username: turnUser,
-                            credential: turnPwd
+                            urls: turnUrl
                         }
                     ]
                 }
