@@ -183,7 +183,7 @@ const SfuStream = ({files}) => {
         var utils = require('kurento-utils');
         let origGetUserMedia = null;
         //나중에 kurento server 올릴 떄 주소 찾아야됨
-        let turnUrl = "turn:192.168.0.15:3478";
+        let turnUrl = "stun:192.168.0.15:3478";
         let turnUser = "user";
         let turnPwd = "password";
         let locationHost = "192.168.0.15:8080";
