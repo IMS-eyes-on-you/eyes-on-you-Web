@@ -186,7 +186,7 @@ const SfuStream = ({files}) => {
         let turnUrl = "stun:stun.l.google.com:19302";
         let turnUser = "user";
         let turnPwd = "password";
-        let locationHost = "192.168.0.15:8080";
+        let locationHost = "192.168.0.30:8080";
         const ws = useRef(null);
         const useAudio = useRef(true)
         var constraints = {

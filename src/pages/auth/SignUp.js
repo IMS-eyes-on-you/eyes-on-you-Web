@@ -27,7 +27,7 @@ const SignUp = () => {
         setError('');
 
         try {
-            const response = await axios.post('http://localhost:8080/auth/signup', formData);
+            const response = await axios.post('http://192.168.0.30:8080/auth/signup', formData);
             console.log('회원가입 성공:', response.data);
             navigate('/classroom')
 
