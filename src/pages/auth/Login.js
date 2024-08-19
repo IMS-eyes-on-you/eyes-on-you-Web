@@ -9,7 +9,7 @@ const Login = () => {
     const password = useRef(null)
     const [isExpanded, setIsExpanded] = useState(false);
     const navigate = useNavigate()
-    const locationHost = '192.168.0.15:8080'
+    const locationHost = '192.168.0.30:8080'
     const login = async () => {
         try {
             // POST 요청은 body에 실어 보냄
