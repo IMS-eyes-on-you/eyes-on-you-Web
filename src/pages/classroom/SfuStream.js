@@ -226,7 +226,9 @@ const SfuStream = ({files}) => {
                 configuration: {
                     iceServers: [
                         {
-                            urls: turnUrl
+                            urls: turnUrl,
+                            username: turnUser,
+                            credential: turnPwd,
                         }
                     ]
                 }
@@ -259,7 +261,10 @@ const SfuStream = ({files}) => {
                 configuration: {
                     iceServers: [
                         {
-                            urls: turnUrl
+                            urls: turnUrl,
+                            username: turnUser,
+                            credential: turnPwd,
+
                         }
                     ]
                 }
