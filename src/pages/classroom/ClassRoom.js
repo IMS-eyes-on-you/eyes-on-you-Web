@@ -11,7 +11,7 @@ const ClassRoom = () => {
 
     useEffect(() => {
         // SSE 연결 설정
-        const eventSource = new EventSource('http://192.168.0.30:8080/alert');
+        const eventSource = new EventSource('http://220.149.128.13:8080/alert');
 
         eventSource.onopen = () => {
             console.log("SSE-Connect")
