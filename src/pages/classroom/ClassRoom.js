@@ -39,7 +39,7 @@ const ClassRoom = () => {
     }
     const sendEyeData = async () => {
         try {
-            const response = await fetch('http://localhost:8080/send/message', {
+            const response = await fetch('http://220.149.128.13:8080/send/message', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
