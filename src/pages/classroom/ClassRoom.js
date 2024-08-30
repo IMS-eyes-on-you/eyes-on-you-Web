@@ -18,6 +18,7 @@ const ClassRoom = () => {
         if (window.electron && window.electron.tobiiJarOutput) {
             window.electron.tobiiJarOutput((output) => {
                 setData(output);
+                console.log(output);
                 const parsedData = parseJson(output);
                 dataRef.current.push(parsedData);
             });
