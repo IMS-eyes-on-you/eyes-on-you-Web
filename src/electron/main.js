@@ -17,7 +17,7 @@ function createWindow() {
         },
     });
     // root URL
-    mainWindow.loadURL('http://220.149.128.13:8080');
+    mainWindow.loadURL('http://220.149.128.13:8888');
 
     // Tobii JAR 파일 실행
     const child = spawn('java', ['-jar', jarPath]);
