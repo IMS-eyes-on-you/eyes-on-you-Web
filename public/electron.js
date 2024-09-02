@@ -1,8 +1,6 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
-// jar file 경로, main.js를 기준으로 한 상대 경로
-const jarPath = path.join(__dirname, './TobiiStreamEngineForJava-4.0.jar');
 
 let mainWindow;
 
@@ -16,10 +14,14 @@ function createWindow() {
             contextIsolation: true,
         },
     });
-    // root URL
+
+    // 웹 페이지 로드
     mainWindow.loadURL('http://220.149.128.13:8888');
 
-    // Tobii JAR 파일 실행
+    // JAR 파일 경로 설정
+    const jarPath = path.join(app.getAppPath(), 'resources', 'resources', 'TobiiStreamEngineForJava-4.0.jar');
+
+    // JAR 파일 실행
     const child = spawn('java', ['-jar', jarPath]);
 
     child.stdout.on('data', (data) => {
@@ -28,17 +30,27 @@ function createWindow() {
 
     child.stderr.on('data', (data) => {
         console.error(`stderr: ${data}`);
+        mainWindow.webContents.send('jar-error', data.toString());
     });
 
     child.on('close', (code) => {
         console.log(`child process exited with code ${code}`);
+        mainWindow.webContents.send('jar-exit', `Process exited with code ${code}`);
     });
 }
 
 app.whenReady().then(() => {
     createWindow();
+
+    app.on('activate', () => {
+        if (mainWindow === null) {
+            createWindow();
+        }
+    });
 });
 
-app.on('window-all-closed', function () {
-    if (process.platform !== 'darwin') app.quit();
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
 });

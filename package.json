@@ -18,8 +18,9 @@
     "canvas": "^2.11.2",
     "electron-store": "^3.2.0",
     "encoding": "^0.1.13",
-    "kurento-utils": "^7.0.0",
+    "kurento-utils": "^5.1.0",
     "node-notifier": "^10.0.1",
+    "node-sass": "^9.0.0",
     "pdfjs-dist": "^2.16.105",
     "react": "^18.3.1",
     "react-doc-viewer": "^0.1.13",
@@ -27,7 +28,7 @@
     "react-icons": "^5.2.1",
     "react-minimal-side-navigation": "^1.9.2",
     "react-router-dom": "^6.23.1",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "rework": "^1.0.1",
     "rework-visit": "^1.0.0",
     "sockjs-client": "^1.6.1",
@@ -35,29 +36,23 @@
     "ts-node": "^10.9.2",
     "utf-8-validate": "^5.0.10",
     "uuid": "^8.3.2",
-    "vue-template-compiler": "^2.7.16",
+    "vue-template-compiler": "^0.1.0",
     "web-vitals": "^2.1.4",
     "webpack-hot-middleware": "^2.26.1",
     "webpack-plugin-serve": "^1.6.0",
     "worker-loader": "^3.0.8"
   },
   "scripts": {
-    "postinstall": "electron-builder install-app-deps",
-    "electron": "electron .",
-    "dist": "electron-builder",
-    "dist:win": "electron-builder --win",
     "start": "react-scripts start",
+    "electron": "electron .",
+    "electron:window": "SET ELECTRON_START_URL=http://localhost:3000 && yarn electron",
+    "electron:xos": "ELECTRON_START_URL=http://localhost:3000 && yarn electron",
+    "prebuild": "react-scripts test --watchAll=false",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "preelectron-pack": "yarn build",
-    "electron-pack": "electron-builder --win portable --x64",
-    "build:linux": "yarn build:linux32 && yarn build:linux64",
-    "build:linux32": "electron-builder --linux --ia32",
-    "build:linux64": "electron-builder --linux --x64",
-    "build:win": "yarn build:win32 && yarn build:win64",
-    "build:win32": "electron-builder --win portable --ia32",
-    "build:win64": "electron-builder --win portable --x64"
+    "deploy:xos": "electron-builder --mac",
+    "deploy:win32": "electron-builder --win --ia32",
+    "deploy:win64": "electron-builder --win --x64",
+    "deploy:win": "yarn deploy:win32 && yarn deploy:win64"
   },
   "eslintConfig": {
     "extends": [
@@ -80,13 +75,14 @@
   "devDependencies": {
     "@electron/rebuild": "^3.6.0",
     "electron": "^31.1.0",
-    "electron-builder": "^20.40.2",
+    "electron-builder": "^24.13.3",
     "electron-packager": "^17.1.2",
-    "nodemon": "^1.18.10"
+    "nodemon": "^3.1.4",
+    "typescript": "^4.9.5"
   },
   "build": {
     "productName": "eyes-on-you",
-    "appId": "com.nb.electron",
+    "appId": "com.eyes-on-you.electron",
     "asar": true,
     "mac": {
       "target": [
@@ -94,7 +90,8 @@
       ]
     },
     "dmg": {
-      "title": "eyes-on-you"
+      "title": "eyes-on-you",
+      "icon": "build/icons/icon.icns"
     },
     "win": {
       "target": [
@@ -114,7 +111,14 @@
     "directories": {
       "buildResources": "./build/",
       "output": "./dist/"
-    }
+    },
+    "extraResources": [
+      {
+        "from": "public/TobiiStreamEngineForJava-4.0.jar",
+        "to": "resources/TobiiStreamEngineForJava-4.0.jar",
+        "filter": ["**/*"]
+      }
+    ]
   },
   "homepage": "./",
   "author": "Captain Electron"
