@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
 // jar file 경로, main.js를 기준으로 한 상대 경로
-const jarPath = path.join(__dirname, 'TobiiStreamEngineForJava-4.0.jar');
+const jarPath = path.join(__dirname, './TobiiStreamEngineForJava-4.0.jar');
 
 let mainWindow;
 
@@ -17,7 +17,7 @@ function createWindow() {
         },
     });
     // root URL
-    mainWindow.loadURL('http://localhost:3000');
+    mainWindow.loadURL('http://220.149.128.13:8888');
 
     // Tobii JAR 파일 실행
     const child = spawn('java', ['-jar', jarPath]);
