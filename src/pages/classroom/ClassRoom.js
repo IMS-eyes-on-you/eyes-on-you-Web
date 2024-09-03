@@ -15,7 +15,6 @@ const ClassRoom = () => {
     const dataRef = useRef([]);
 
     useEffect(() => {
-        console.log("파일 위치:" + app.getAppPath())
         if (window.electron && window.electron.tobiiJarOutput) {
             window.electron.tobiiJarOutput((output) => {
                 setData(output);
