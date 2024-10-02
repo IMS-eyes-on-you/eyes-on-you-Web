@@ -1,0 +1,39 @@
+*{
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+}
+.top-bar{
+    width: 100%;
+    height: 100px;
+    background-color: #6200EE ;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.top-bar p {
+    color: #FFFFFF;
+    font-size: 40px;
+    justify-content: center;
+    flex-grow: 1;
+
+}
+.top-bar-account-btn, .top-bar-notice-btn {
+    width: 46px;
+    height: 46px;
+    border: none;
+    background-size: cover;
+    border-radius: 30px;
+    margin-right: 35px;
+}
+
+.top-bar-account-btn {
+    background-image: url("/public/top-bar-profile.png");
+
+}
+.top-bar-notice-btn {
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

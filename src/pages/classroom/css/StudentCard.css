@@ -1,0 +1,39 @@
+.student-card{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    margin: 10px;
+}
+.student-card-profile{
+    display: flex;
+    align-items: center;
+}
+.student-card-profile img{
+    width: 40px;
+    height: 40px;
+}
+.student-card-profile p{
+    font-size: 22px;
+    text-align: center;
+}
+.student-card-control-box{
+    display: flex;
+    align-items: center;
+}
+
+.student-card-mute,.student-card-cam {
+    background-color: transparent;
+    border: none;
+
+    background-size: cover;
+    width: 30px;
+    height: 30px;
+}
+.student-card-cam{
+    background-image: url("../../../image/student-card-cam.png");
+}
+.student-card-mute{
+    background-image: url("../../../image/student-card-mute.png")
+}

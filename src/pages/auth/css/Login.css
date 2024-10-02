@@ -1,0 +1,169 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+}
+
+.login-wrap {
+    width: 100vw;
+    height: 100vh;
+    background-color: #6200EE;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-form {
+    width: 800px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-form-logo {
+    font-size: 70px;
+    font-weight: bold;
+    letter-spacing: 5px;
+    color: #FFFFFF;
+}
+
+.login-form-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    height: 420px;
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    margin-top: 100px;
+    transition: height 0.3s ease;
+}
+
+.login-form-box-login-btn, .login-form-box-register-btn, .login-submit-btn {
+    width: 75%;
+    height: 80px;
+    border-color: #6200EE;
+    border-radius: 20px;
+    font-size: 35px;
+    background-color: #FFFFFF;
+    color: #6200EE;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.login-form-box-login-btn {
+    background-color: #6200EE;
+    color: #FFFFFF;
+}
+
+.login-form-box-login-btn:hover, .login-form-box-register-btn:hover, .login-submit-btn:hover {
+    opacity: 0.7;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    background: #6200EE;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    height: 100px;
+}
+
+h1 span {
+    position: relative;
+    top: 20px;
+    display: inline-block;
+    animation: bounce  .4s ease infinite alternate;
+    font-family: 'MS UI Gothic', cursive;
+    font-size: 80px;
+    color: #FFF;
+    text-shadow: 0 1px 0 #CCC,
+    0 2px 0 #CCC,
+    0 3px 0 #CCC,
+    0 4px 0 #CCC,
+    0 5px 0 #CCC,
+    0 6px 0 transparent,
+    0 7px 0 transparent,
+    0 8px 0 transparent,
+    0 9px 0 transparent,
+    0 10px 10px rgba(0, 0, 0, .4);
+}
+
+h1 span:nth-child(2) { animation-delay: .1s; }
+h1 span:nth-child(3) { animation-delay: .2s; }
+h1 span:nth-child(4) { animation-delay: .3s; }
+h1 span:nth-child(5) { animation-delay: .4s; }
+h1 span:nth-child(6) { animation-delay: .5s; }
+h1 span:nth-child(7) { animation-delay: .6s; }
+h1 span:nth-child(8) { animation-delay: .7s; }
+
+@keyframes bounce {
+    100% {
+        top: -20px;
+        text-shadow: 0 1px 0 #CCC,
+        0 2px 0 #CCC,
+        0 3px 0 #CCC,
+        0 4px 0 #CCC,
+        0 5px 0 #CCC,
+        0 6px 0 #CCC,
+        0 7px 0 #CCC,
+        0 8px 0 #CCC,
+        0 9px 0 #CCC,
+        0 50px 25px rgba(0, 0, 0, .2);
+    }
+}
+
+.login-inputs {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    gap: 50px;
+}
+
+.login-inputs input {
+    padding: 10px;
+    font-size: 35px;
+    width: 75%;
+    height: 80px;
+    border-radius: 20px;
+    border-color: #6200EE;
+    background-color: #FFFFFF;
+    color: #6200EE;
+}
+
+.login-inputs .login-submit-btn {
+    padding: 10px;
+    font-size: 35px;
+    cursor: pointer;
+    width: 75%;
+    height: 80px;
+    border-radius: 20px;
+    background-color: #6200EE;
+    color: #FFFFFF;
+    border: none;
+}
+
+.login-wrap.expanded .login-form-box {
+    height: 600px; /* 높이 증가 */
+}
+
+.login-wrap.expanded .login-form-box > *:not(.login-inputs) {
+    display: none; /* 기존 버튼 숨기기 */
+}
+
+.login-wrap.expanded .login-inputs {
+    display: flex;
+}

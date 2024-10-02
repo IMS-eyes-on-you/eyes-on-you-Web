@@ -1,0 +1,128 @@
+{
+  "name": "eyes-on-you",
+  "version": "0.1.0",
+  "private": true,
+  "main": "public/electron.js",
+  "dependencies": {
+    "@cyntler/react-doc-viewer": "^1.16.6",
+    "@react-pdf-viewer/core": "^3.12.0",
+    "@rspack/core": "^0.7.5",
+    "@swc/core": "^1.7.18",
+    "@swc/helpers": "^0.5.12",
+    "@swc/wasm": "^1.7.18",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.7.2",
+    "bufferutil": "^4.0.8",
+    "canvas": "^2.11.2",
+    "electron-store": "^3.2.0",
+    "encoding": "^0.1.13",
+    "kurento-utils": "^5.1.0",
+    "node-notifier": "^10.0.1",
+    "node-sass": "^9.0.0",
+    "pdfjs-dist": "^2.16.105",
+    "react": "^18.3.1",
+    "react-doc-viewer": "^0.1.13",
+    "react-dom": "^18.3.1",
+    "react-icons": "^5.2.1",
+    "react-minimal-side-navigation": "^1.9.2",
+    "react-router-dom": "^6.23.1",
+    "react-scripts": "^5.0.1",
+    "rework": "^1.0.1",
+    "rework-visit": "^1.0.0",
+    "sockjs-client": "^1.6.1",
+    "sudo-prompt": "^9.2.1",
+    "ts-node": "^10.9.2",
+    "utf-8-validate": "^5.0.10",
+    "uuid": "^8.3.2",
+    "vue-template-compiler": "^0.1.0",
+    "web-vitals": "^2.1.4",
+    "webpack-hot-middleware": "^2.26.1",
+    "webpack-plugin-serve": "^1.6.0",
+    "worker-loader": "^3.0.8"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "electron": "electron .",
+    "electron:window": "SET ELECTRON_START_URL=http://localhost:3000 && yarn electron",
+    "electron:xos": "ELECTRON_START_URL=http://localhost:3000 && yarn electron",
+    "prebuild": "react-scripts test --watchAll=false",
+    "build": "react-scripts build",
+    "deploy:xos": "electron-builder --mac",
+    "deploy:win32": "electron-builder --win --ia32",
+    "deploy:win64": "electron-builder --win --x64",
+    "deploy:win": "yarn deploy:win32 && yarn deploy:win64"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^3.6.0",
+    "electron": "^31.1.0",
+    "electron-builder": "^24.13.3",
+    "electron-packager": "^17.1.2",
+    "nodemon": "^3.1.4",
+    "typescript": "^4.9.5",
+    "socket.io-client": "^4.7.5"
+  },
+  "build": {
+    "productName": "eyes-on-you",
+    "appId": "com.eyes-on-you.electron",
+    "asar": true,
+    "mac": {
+      "target": [
+        "default"
+      ]
+    },
+    "dmg": {
+      "title": "eyes-on-you",
+      "icon": "build/icons/icon.icns"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "perMachine": true,
+      "language": 1042,
+      "shortcutName": "eyes-on-you",
+      "artifactName": "eyes-on-you-${version}.${ext}",
+      "uninstallDisplayName": "eyes-on-you"
+    },
+    "directories": {
+      "buildResources": "./build/",
+      "output": "./dist/"
+    },
+    "extraResources": [
+      {
+        "from": "public/TobiiStreamEngineForJava-4.0.jar",
+        "to": "TobiiStreamEngineForJava-4.0.jar",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ]
+  },
+  "homepage": "./",
+  "author": "Captain Electron"
+}

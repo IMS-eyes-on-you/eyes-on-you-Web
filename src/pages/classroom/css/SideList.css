@@ -1,0 +1,52 @@
+.side-list > side-list-form {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    width: 100%;
+
+}
+
+.button-area {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content:space-around;
+}
+
+.content-area {
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.student-card {
+    width: auto;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.material-upload {
+    display: flex;
+    flex-direction: column;
+}
+
+.file-list p {
+    margin: 5px 0;
+}
+.custom-button {
+    width: 45%;
+    height: 50px;
+    border-radius: 10px;
+    border: none;
+    background-color: #FFFFFF;
+    color: black;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.custom-button:hover {
+    background-color: #F6EFFF;
+    color: #6300EE;
+}
+

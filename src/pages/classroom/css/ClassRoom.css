@@ -1,0 +1,47 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.class-room{
+    width: 100vw;
+    height: 100vh;
+    background-color: #EFEFEF;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.main-contents{
+    width: calc(100% - 100px);
+    height: 100vh;
+    display: flex;
+    overflow: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    margin-left: 100px;
+    margin-top: 20px;
+
+    flex: 1;
+}
+.content-form{
+    width: calc(100vw - 100px);
+    height: calc(100vh - 280px);
+    display: flex;
+}
+.source-form{
+    width:calc(70% + 20px);
+    height: 100%;
+    overflow: auto;
+}
+.side-list{
+    position: sticky;
+    top: 0;
+    width: 30%;
+    height: 100%;
+
+    overflow-y: auto; /* Allow sidebar content to scroll */
+}
+.textLayer {
+    display: none !important;
+}
+
