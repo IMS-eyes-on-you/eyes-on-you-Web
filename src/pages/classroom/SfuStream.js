@@ -21,6 +21,8 @@ const SfuStream = ({files}) => {
     const screenShareStreamRef = useRef();
     const originalVideoTrackRef = useRef(null);
     const isHost = useRef(false)
+    const userList = useRef(new Map())
+    const [hostId, setHostId] = useState(null);
   
   
     const stopScreenSharing = async () => {
@@ -71,6 +73,7 @@ const SfuStream = ({files}) => {
       socketRef.current.on("newStream", handleNewStream);
       socketRef.current.on("sendAnswer", handleSendAnswer);
       socketRef.current.on("recvAnswer", handleRecvAnswer);
+      socketRef.current.on("host_list", handleHostList)
       socketRef.current.on("hostOut", hostOut)
       socketRef.current.on("bye", handleBye);
   
@@ -183,6 +186,10 @@ const SfuStream = ({files}) => {
       if(idList.length === 0){
         isHost.current = true
         handleScreenClick()
+        setHostId('me')
+      }
+      else{
+        hostId.current = idList[0]
       }
       
       idList.forEach((id) => {
@@ -192,6 +199,10 @@ const SfuStream = ({files}) => {
       createSendPeer();
       createSendOffer();
     };
+
+    const handleHostList = (hostUserList) => {
+      //hostList.current = hostUserList
+    }
   
     const handleRecvCandidate = async (candidate, sendId) => {
       console.log("got recvCandidate from server");
@@ -342,21 +353,33 @@ const SfuStream = ({files}) => {
       setPeerStreams(prevStreams => new Map(prevStreams).set(sendId, data.streams[0]));
     };
   
-    //const fullScreen = () => {
-    //  Object.values(participants).map((participant) => {
-    //      console.log(participant.host)
-    //      if (participant.host) {
-    //          participant.getVideoElement().requestFullscreen()
-    //          return;
-    //      }
-    //  })
-    //}
+    const fullScreen = () => {
+      if (hostId) {
+          let hostVideo;
+          if (hostId === 'me') {
+              hostVideo = myFaceRef.current;
+          } else {
+              hostVideo = document.getElementById(`peer-${hostId}`);
+          }
+          
+          if (hostVideo) {
+              if (hostVideo.requestFullscreen) {
+                  hostVideo.requestFullscreen();
+              } else if (hostVideo.mozRequestFullScreen) { // Firefox
+                  hostVideo.mozRequestFullScreen();
+              } else if (hostVideo.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                  hostVideo.webkitRequestFullscreen();
+              } else if (hostVideo.msRequestFullscreen) { // IE/Edge
+                  hostVideo.msRequestFullscreen();
+              }
+          }
+      }
+  }
 
 
         return (
             <div className="App">
       <header>
-        <h1>GMOVIE</h1>
       </header>
       <main>
         {!showCall ? (
@@ -395,6 +418,9 @@ const SfuStream = ({files}) => {
               <button onClick={handleExit}>
                 {"exit button"}
               </button>
+              <button onClick={fullScreen}>
+                {"full screen"}
+              </button>
 
               <select onChange={handleCameraChange}>
                 {cameras.map((camera) => (
@@ -408,6 +434,7 @@ const SfuStream = ({files}) => {
               {Array.from(peerStreams).map(([id, stream]) => (
                 <video
                   key={id}
+                  id={"peer-"+id}
                   autoPlay
                   playsInline
                   width="100"
